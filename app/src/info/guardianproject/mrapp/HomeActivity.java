@@ -53,24 +53,20 @@ import android.widget.TextView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.fima.cardsui.views.CardUI;
-//import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.viewpagerindicator.CirclePageIndicator;
 
 public class HomeActivity extends BaseActivity {
 
-    
     private ProgressDialog mLoading;
     private ArrayList<Lesson> mLessonsCompleted;
     private ArrayList<Project> mListProjects;
 
-
 	CardUI mCardView;
     
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    
     	super.onCreate(savedInstanceState);
+        
         try {
             String pkg = getPackageName();
             String vers= getPackageManager().getPackageInfo(pkg, 0).versionName;
@@ -85,10 +81,11 @@ public class HomeActivity extends BaseActivity {
         // action bar stuff
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
+        Eula.show(this);
+
         checkForTor();
         
         //checkForUpdates();
-        
     }
     
     
@@ -143,19 +140,19 @@ public class HomeActivity extends BaseActivity {
 
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            if (mLoading != null && mLoading.isShowing()) {
-                try {
-                    mLoading.dismiss();
-                    mLoading = null;
-                } catch (Exception e) {
-                    // ignore: http://stackoverflow.com/questions/2745061/java-lang-illegalargumentexception-view-not-attached-to-window-manager
-                }
-            }
+            try {
+            	
 
-            if (mLessonsCompleted.size() == 0 && mListProjects.size() == 0) {
-                initIntroActivityList();
-            } else {
-                initActivityList();
+                if (mLoading != null && mLoading.isShowing())
+                	mLoading.dismiss();
+
+                if (mLessonsCompleted.size() == 0 && mListProjects.size() == 0)
+                	initIntroActivityList();
+                else
+                	initActivityList();
+                
+            } catch (Throwable t) {
+                Log.v(AppConstants.TAG, "loading.dismiss() problem", t);
             }
         }
     }
@@ -381,7 +378,6 @@ public class HomeActivity extends BaseActivity {
     private void initIntroActivityList ()
     {
       	setContentView(R.layout.activity_home_intro);
-      	initSlidingMenu();
       	
 		int[] titles1 =
 			{(R.string.tutorial_title_1),
@@ -630,50 +626,48 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == android.R.id.home)
         {
-            mSlidingMenu.toggle();
-            return true;
         }
         else if (item.getItemId() == R.id.menu_settings)
         {
-            showPreferences();
+			showPreferences();
             return true;
-        }
-        else if (item.getItemId() == R.id.menu_logs)
-        {
-            collectAndSendLog();
+		}
+		else if (item.getItemId() == R.id.menu_logs)
+		{
+			collectAndSendLog();
             return true;
-        }
-        else if (item.getItemId() == R.id.menu_new_project)
-        {
-            startActivity(new Intent(this, StoryNewActivity.class));
+		}
+		else if (item.getItemId() == R.id.menu_new_project)
+		{
+			 startActivity(new Intent(this, StoryNewActivity.class));
             return true;
-        }
-        else if (item.getItemId() == R.id.menu_bug_report)
-        {
-            String url = "https://docs.google.com/forms/d/1KrsTg-NNr8gtQWTCjo-7Fv2L5cml84EcmIuGGNiC4fY/viewform";
+		}
+		else if (item.getItemId() == R.id.menu_bug_report)
+		{
+			String url = "https://docs.google.com/forms/d/1KrsTg-NNr8gtQWTCjo-7Fv2L5cml84EcmIuGGNiC4fY/viewform";
 
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(url));
             startActivity(i);
             return true;
-        }
-        else if (item.getItemId() == R.id.menu_about)
-        {
-            String url = "https://storymaker.cc";
+		}
+		else if (item.getItemId() == R.id.menu_about)
+		{
+			String url = "https://storymaker.cc";
 
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(url));
             startActivity(i);
             return true;
-        }
-
+		}
+        
         return super.onOptionsItemSelected(item);
-    }
+	}
     
 	void collectAndSendLog(){
 		
@@ -832,5 +826,9 @@ public class HomeActivity extends BaseActivity {
 
 		      writer.close();
 	 }
-    
+	 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

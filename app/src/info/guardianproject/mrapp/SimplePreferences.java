@@ -13,7 +13,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 
 
-public class SimplePreferences extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
+public class SimplePreferences extends SherlockPreferenceActivity  {
 
 	public static final String KEY_VIDEO_RESOLUTION = "p_video_resolution";
 	public static final String KEY_VIDEO_WIDTH = "p_video_width";
@@ -32,6 +32,9 @@ public class SimplePreferences extends SherlockPreferenceActivity implements OnS
 		
 		setResult(RESULT_OK);
 		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
 		Preference prefVideoWidth = (Preference) getPreferenceScreen().findPreference(KEY_VIDEO_WIDTH);	
 		prefVideoWidth.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() 
 		{
@@ -69,6 +72,17 @@ public class SimplePreferences extends SherlockPreferenceActivity implements OnS
 		    	}
 		    }
 		});
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+        onBackPressed();
+        return true;
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    super.onBackPressed();
 	}
 	
 	@SuppressWarnings("deprecation")

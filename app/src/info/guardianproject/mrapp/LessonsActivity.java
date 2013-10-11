@@ -1,5 +1,13 @@
 package info.guardianproject.mrapp;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Date;
+
 import info.guardianproject.mrapp.lessons.LessonListView;
 import info.guardianproject.mrapp.lessons.WebViewSetupJB;
 
@@ -10,6 +18,7 @@ import org.holoeverywhere.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
@@ -47,7 +56,6 @@ public class LessonsActivity extends BaseActivity implements ActionBar.TabListen
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-     
         
         super.onCreate(savedInstanceState);
            
@@ -102,25 +110,77 @@ public class LessonsActivity extends BaseActivity implements ActionBar.TabListen
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-
-	        	boolean handled = mListView.handleBack();
-	        	
-	        	if (!handled)
-	        		NavUtils.navigateUpFromSameTask(this);
-	        	
-                return true;
-            case R.id.menu_update:
-                updateLessons();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+             
+	    if (item.getItemId() == R.id.menu_update)
+	    {
+	    	startActivity(new Intent(this, StoryNewActivity.class));
+	    }
+	    else if (item.getItemId() == R.id.menu_settings)
+	    {
+			showPreferences();
+		}
+		else if (item.getItemId() == R.id.menu_logs)
+		{
+			collectAndSendLog();
+		}
+		else if (item.getItemId() == R.id.menu_new_project)
+		{
+			 startActivity(new Intent(this, StoryNewActivity.class));
+		}
+		else if (item.getItemId() == R.id.menu_bug_report)
+		{
+			String url = "https://docs.google.com/forms/d/1KrsTg-NNr8gtQWTCjo-7Fv2L5cml84EcmIuGGNiC4fY/viewform";
+	
+	         Intent i = new Intent(Intent.ACTION_VIEW);
+	         i.setData(Uri.parse(url));
+	         startActivity(i);
+		}
+		else if (item.getItemId() == R.id.menu_about)
+		{
+			String url = "https://storymaker.cc";
+	
+	         Intent i = new Intent(Intent.ACTION_VIEW);
+	         i.setData(Uri.parse(url));
+	         startActivity(i);
+		}
+	     
+	    return super.onOptionsItemSelected(item); 
+	}
+	
+	private void showPreferences ()
+	{
+		Intent intent = new Intent(this,SimplePreferences.class);
+		this.startActivityForResult(intent, 9999);
+	}
     
    
+	void collectAndSendLog(){
+		
+		File fileLog = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"storymakerlog.txt");
+		fileLog.getParentFile().mkdirs();
+		
+		try
+		{
+			writeLogToDisk("StoryMaker",fileLog);
+			writeLogToDisk("FFMPEG",fileLog);
+			writeLogToDisk("SOX",fileLog);
+			
+			Intent i = new Intent(Intent.ACTION_SEND);
+			i.putExtra(Intent.EXTRA_EMAIL, "help@guardianproject.info");
+			i.putExtra(Intent.EXTRA_SUBJECT, "StoryMaker Log");
+			i.putExtra(Intent.EXTRA_TEXT, "StoryMaker log email: " + new Date().toGMTString());
+			i.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(fileLog));
+			i.setType("text/plain");
+			startActivity(Intent.createChooser(i, "Send mail"));
+		}
+		catch (IOException e)
+		{
+			
+		}
+    }
+	
     @Override
 	protected void onActivityResult(int reqCode, int resCode, Intent intent) {
 		
@@ -324,6 +384,8 @@ public class LessonsActivity extends BaseActivity implements ActionBar.TabListen
     	
     	if (!handled)
     		NavUtils.navigateUpFromSameTask(this);
+    	
+    	super.onBackPressed();
     }
     
 	 @Override
@@ -344,4 +406,24 @@ public class LessonsActivity extends BaseActivity implements ActionBar.TabListen
 	        return super.onKeyDown(keyCode, event);
 	    }
 
+	    private void writeLogToDisk (String tag, File fileLog) throws IOException
+		{	 
+			FileWriter fos = new FileWriter(fileLog,true);
+			BufferedWriter writer = new BufferedWriter(fos);
+
+		    Process process = Runtime.getRuntime().exec("logcat -d " + tag + ":D *:S");
+		    BufferedReader bufferedReader = 
+		    new BufferedReader(new InputStreamReader(process.getInputStream()));
+		
+		 
+		    String line;
+		    while ((line = bufferedReader.readLine()) != null) {
+			  
+			    writer.write(line);
+			    writer.write('\n');
+		    }
+		    bufferedReader.close();
+		
+		    writer.close();
+		}
 }

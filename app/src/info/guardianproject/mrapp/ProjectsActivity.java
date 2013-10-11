@@ -3,8 +3,18 @@ package info.guardianproject.mrapp;
 import info.guardianproject.mrapp.model.Media;
 import info.guardianproject.mrapp.model.Project;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 
+import org.ffmpeg.android.MediaUtils;
 import org.holoeverywhere.app.AlertDialog;
 
 import android.app.Activity;
@@ -12,8 +22,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,22 +88,46 @@ public class ProjectsActivity extends BaseActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+             
+            if (item.getItemId() == R.id.menu_new_project)
+            {
+            	startActivity(new Intent(this, StoryNewActivity.class));
+                return true;
+            }
+            else if (item.getItemId() == R.id.menu_settings)
+            {
+                showPreferences();
+                return true;
+            }
+            else if (item.getItemId() == R.id.menu_logs)
+            {
+                collectAndSendLog();
+                return true;
+            }
+            else if (item.getItemId() == R.id.menu_new_project2)
+            {
+                startActivity(new Intent(this, StoryNewActivity.class));
+                return true;
+            }
+            else if (item.getItemId() == R.id.menu_bug_report)
+            {
+                String url = "https://docs.google.com/forms/d/1KrsTg-NNr8gtQWTCjo-7Fv2L5cml84EcmIuGGNiC4fY/viewform";
 
-		switch (item.getItemId()) {
-         case android.R.id.home:
-
-	        	NavUtils.navigateUpFromSameTask(this);
-	        	
-             return true;
-         case R.id.menu_new_project:
- 		
-			 startActivity(new Intent(this, StoryNewActivity.class));
-
-             return true;
-     }
- 		
-     return super.onOptionsItemSelected(item);
-  
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+                return true;
+     		}
+            else if (item.getItemId() == R.id.menu_about)
+            {
+                String url = "https://storymaker.cc";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+                return true;
+            }
+             
+            return super.onOptionsItemSelected(item); 
 	}
     
 	
@@ -99,9 +137,6 @@ public class ProjectsActivity extends BaseActivity {
 		this.startActivityForResult(intent, 9999);
 	}
 
-    
-    
- 
 
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
@@ -294,9 +329,30 @@ public class ProjectsActivity extends BaseActivity {
         }
         
     }
-
-
-   
     
+    private void writeLogToDisk (String tag, File fileLog) throws IOException
+	{	 
+		FileWriter fos = new FileWriter(fileLog,true);
+		BufferedWriter writer = new BufferedWriter(fos);
+
+	    Process process = Runtime.getRuntime().exec("logcat -d " + tag + ":D *:S");
+	    BufferedReader bufferedReader = 
+	    new BufferedReader(new InputStreamReader(process.getInputStream()));
+	
+	 
+	    String line;
+	    while ((line = bufferedReader.readLine()) != null) {
+		  
+		    writer.write(line);
+		    writer.write('\n');
+	    }
+	    bufferedReader.close();
+	
+	    writer.close();
+	}
     
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

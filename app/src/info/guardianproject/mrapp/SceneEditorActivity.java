@@ -195,6 +195,9 @@ public class SceneEditorActivity extends EditorBaseActivity implements ActionBar
                 	return true;
                 }
                 return true;
+            case R.id.showPreferences:
+            	showPreferences();       
+                return true;
                 
         }
         return super.onOptionsItemSelected(item);
@@ -387,6 +390,12 @@ public class SceneEditorActivity extends EditorBaseActivity implements ActionBar
     {
         mMPM.mMediaHelper.openGalleryChooser("*/*");
     }
+    
+	private void showPreferences()
+	{
+		Intent intent = new Intent(this,SimplePreferences.class);
+		this.startActivityForResult(intent, 9999);
+	}
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {

@@ -1,269 +1,123 @@
 package info.guardianproject.mrapp;
-import info.guardianproject.mrapp.server.LoginActivity;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
 
 import org.holoeverywhere.app.Activity;
-
-import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.PixelFormat;
-import android.view.WindowManager;
-import android.widget.ImageView;
 
-//import com.google.analytics.tracking.android.EasyTracker;
-import com.slidingmenu.lib.SlidingMenu;
-import com.slidingmenu.lib.SlidingMenu.OnClosedListener;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class BaseActivity extends Activity {
-
-	public SlidingMenu mSlidingMenu;
-
-	@Override
-	public void onStart() {
-		super.onStart();
-//		EasyTracker.getInstance(this).activityStart(this);
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-//		EasyTracker.getInstance(this).activityStop(this);
-	}
-
-    public void initSlidingMenu ()
-    {
-
-        mSlidingMenu = new SlidingMenu(this);
-        mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
-        mSlidingMenu.setShadowDrawable(R.drawable.shadow);
-        mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-        
-        mSlidingMenu.setBehindWidthRes(R.dimen.slidingmenu_offset);
-        mSlidingMenu.setFadeDegree(0.35f);
-        mSlidingMenu.setMenu(R.layout.fragment_drawer);
-
-		mSlidingMenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
-        mSlidingMenu.setOnClosedListener(new OnClosedListener() {
-
-            @Override
-            public void onClosed() {
-                mSlidingMenu.requestLayout();
-
-            }
-        });
-        
-        final Activity activity = this;
-        
-        ImageButton btnDrawerQuickCaptureVideo = (ImageButton) findViewById(R.id.btnDrawerQuickCaptureVideo);
-        ImageButton btnDrawerQuickCapturePhoto = (ImageButton) findViewById(R.id.btnDrawerQuickCapturePhoto);
-        ImageButton btnDrawerQuickCaptureAudio = (ImageButton) findViewById(R.id.btnDrawerQuickCaptureAudio);
-        
-        Button btnDrawerHome = (Button) findViewById(R.id.btnDrawerHome);
-        Button btnDrawerProjects = (Button) findViewById(R.id.btnDrawerProjects);
-        Button btnDrawerLessons = (Button) findViewById(R.id.btnDrawerLessons);
-        Button btnDrawerAccount = (Button) findViewById(R.id.btnDrawerAccount);
-        Button btnDrawerSettings = (Button) findViewById(R.id.btnDrawerSettings);
-        
-
-       
-        btnDrawerQuickCaptureVideo.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            	
-            	String dateNowStr = new Date().toLocaleString();
-                
-            	Intent intent = new Intent(BaseActivity.this, StoryNewActivity.class);
-            	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            	intent.putExtra("story_name", "Quick Story " + dateNowStr);
-            	intent.putExtra("story_type", 0);
-            	intent.putExtra("auto_capture", true);
-                
-                 activity.startActivity(intent);           
-                 }
-        });
-        
-        btnDrawerQuickCapturePhoto.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            	
-            	String dateNowStr = new Date().toLocaleString();
-                
-            	Intent intent = new Intent(BaseActivity.this, StoryNewActivity.class);
-            	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            	intent.putExtra("story_name", "Quick Story " + dateNowStr);
-            	intent.putExtra("story_type", 2);
-            	intent.putExtra("auto_capture", true);
-                
-                 activity.startActivity(intent);           
-                 }
-        });
-        
-        btnDrawerQuickCaptureAudio.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            	
-            	String dateNowStr = new Date().toLocaleString();
-                
-            	Intent intent = new Intent(BaseActivity.this, StoryNewActivity.class);
-            	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            	intent.putExtra("story_name", "Quick Story " + dateNowStr);
-            	intent.putExtra("story_type", 1);
-            	intent.putExtra("auto_capture", true);
-                
-                 activity.startActivity(intent);           
-                 }
-        });
-        
-        btnDrawerHome.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            	
-            	mSlidingMenu.showContent(true);
-                
-            	 Intent i = new Intent(activity, HomeActivity.class);
-                 activity.startActivity(i);
-            }
-        });
-        btnDrawerProjects.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            	mSlidingMenu.showContent(true);
-            	  Intent i = new Intent(activity, ProjectsActivity.class);
-                  activity.startActivity(i);
-            }
-        });
-        btnDrawerLessons.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            	mSlidingMenu.showContent(true);
-            	
-                Intent i = new Intent(activity, LessonsActivity.class);
-                activity.startActivity(i);
-            }
-        });
-        
-        btnDrawerAccount.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            	mSlidingMenu.showContent(true);
-                Intent i = new Intent(activity, LoginActivity.class);
-                activity.startActivity(i);
-            }
-        });
-        
-        btnDrawerSettings.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            	mSlidingMenu.showContent(true);
-
-                Intent i = new Intent(activity, SimplePreferences.class);
-                activity.startActivity(i);
-            }
-        });
-        
-        
-    }
-    
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-    
-    	super.onCreate(savedInstanceState);
-        
-        (new Eula(this)).show();
-    }
-    
-    @Override
-	public void onPostCreate(Bundle savedInstanceState) {
-		
-		super.onPostCreate(savedInstanceState);
 	
-
-        initSlidingMenu();
-	}
-
-
-
-	private void detectCoachOverlay ()
+	private static DrawerLayout sDrawerLayout;
+	private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+	
+    @Override
+	public void setContentView(int layoutResId) {
+	
+    	super.setContentView(R.layout.activity_base);	
+    	mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_wrapper);
+    	View childLayout = getLayoutInflater().inflate(layoutResId);
+    	
+    	mDrawerLayout.addView(childLayout, 0);
+    	
+    	initNavigationDrawer();
+    	
+    	//FIXME Need to change when updating the UI (see full description in NavigationDrawerFragment.closeNavDrawer)
+    	closeNavDrawer();
+    	sDrawerLayout = mDrawerLayout;
+    	
+    	switch (layoutResId) {
+        case R.layout.activity_home:
+        case R.layout.activity_projects:
+        case R.layout.activity_lessons:
+        	mDrawerToggle.setDrawerIndicatorEnabled(true);
+            break;
+        default:
+        	mDrawerToggle.setDrawerIndicatorEnabled(false);
+            break;
+            
+    	}
+	} 
+    public static void closeNavDrawer()
     {
-        try {
-        	
-        	if (this.getClass().getName().contains("SceneEditorActivity"))
-        	{
-        		showCoachOverlay("images/coach/coach_add.png");
-        	}
-        	else if (this.getClass().getName().contains("OverlayCameraActivity"))
-        	{
-        		showCoachOverlay("images/coach/coach_camera_prep.png");
-        	}
-        		
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	if(sDrawerLayout != null) {
+    		sDrawerLayout.closeDrawers();
+    		sDrawerLayout.invalidate();
+    	}
     }
     
-    /**
-     * 
-	public void switchContent(final Fragment fragment) {
-		mContent = fragment;
-		getSupportFragmentManager()
-		.beginTransaction()
-		.replace(R.id.content_frame, fragment)
-		.commit();
-		Handler h = new Handler();
-		h.postDelayed(new Runnable() {
-			public void run() {
-				getSlidingMenu().showContent();
-			}
-		}, 50);
-	}	
-**/
+	private void initNavigationDrawer() {
+		
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_drawer_white,  /* nav drawer image to replace 'Up' caret */
+                R.string.nav_drawer_open,  /* "open drawer" description for accessibility */
+                R.string.nav_drawer_close /* "close drawer" description for accessibility */
+                ) {
+        	
+            public void onDrawerClosed(View view) {
+                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+            
+            public void onDrawerOpened(View drawerView) {
+            	supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
     
-    private void showCoachOverlay (String path) throws IOException
-    {
-    	ImageView overlayView = new ImageView(this);
-    	
-    	overlayView.setOnClickListener(new OnClickListener () 
-    	{
+        mDrawerLayout.setDrawerListener(mDrawerToggle);  
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState); 
+        
+    }
 
-			@Override
-			public void onClick(View v) {
-				getWindowManager().removeView(v);
-				
-			}
-    		
-    	});
-    	
-    	AssetManager mngr = getAssets();
-        // Create an input stream to read from the asset folder
-           InputStream ins = mngr.open(path);
+    /* Called whenever we call invalidateOptionsMenu() */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        //return super.onPrepareOptionsMenu(menu);
+    	return true;
+    }
 
-           // Convert the input stream into a bitmap
-           Bitmap bmpCoach = BitmapFactory.decodeStream(ins);
-           overlayView.setImageBitmap(bmpCoach);
-           
-    	WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-    	        WindowManager.LayoutParams.MATCH_PARENT,
-    	        WindowManager.LayoutParams.MATCH_PARENT,
-    	        WindowManager.LayoutParams.TYPE_APPLICATION,
-    	        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
-    	        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-    	        PixelFormat.TRANSLUCENT);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        // ActionBarDrawerToggle will take care of this.
+       if (mDrawerToggle.onOptionsItemSelected(Utils.convertABSMenuItemToStock(item))) {
+           return true;
+       }
 
-    	getWindowManager().addView(overlayView, params);
+       return true;
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+    
+    @Override
+    public void onBackPressed() {
+    	closeNavDrawer();
+        super.onBackPressed();
     }
 }
