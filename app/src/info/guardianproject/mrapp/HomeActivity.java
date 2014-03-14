@@ -81,7 +81,7 @@ public class HomeActivity extends BaseActivity {
         // action bar stuff
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
-        Eula.show(this);
+//        Eula.show(this);
 
         checkForTor();
         

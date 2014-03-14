@@ -101,12 +101,7 @@ public class ProjectsActivity extends BaseActivity {
             }
             else if (item.getItemId() == R.id.menu_logs)
             {
-                collectAndSendLog();
-                return true;
-            }
-            else if (item.getItemId() == R.id.menu_new_project2)
-            {
-                startActivity(new Intent(this, StoryNewActivity.class));
+                collectAndSendLog();    
                 return true;
             }
             else if (item.getItemId() == R.id.menu_bug_report)
@@ -328,6 +323,30 @@ public class ProjectsActivity extends BaseActivity {
             return row;
         }
         
+    }
+    
+    void collectAndSendLog() {
+
+        File fileLog = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "storymakerlog.txt");
+        fileLog.getParentFile().mkdirs();
+
+        try
+        {
+            writeLogToDisk("StoryMaker", fileLog);
+            writeLogToDisk("FFMPEG", fileLog);
+            writeLogToDisk("SOX", fileLog);
+
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.putExtra(Intent.EXTRA_EMAIL, "help@guardianproject.info");
+            i.putExtra(Intent.EXTRA_SUBJECT, "StoryMaker Log");
+            i.putExtra(Intent.EXTRA_TEXT, "StoryMaker log email: " + new Date().toGMTString());
+            i.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(fileLog));
+            i.setType("text/plain");
+            startActivity(Intent.createChooser(i, "Send mail"));
+        } catch (IOException e)
+        {
+
+        }
     }
     
     private void writeLogToDisk (String tag, File fileLog) throws IOException

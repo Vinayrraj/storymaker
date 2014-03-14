@@ -6,6 +6,7 @@ package info.guardianproject.mrapp;
 import org.holoeverywhere.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -13,7 +14,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 
 
-public class SimplePreferences extends SherlockPreferenceActivity  {
+public class SimplePreferences extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
 
 	public static final String KEY_VIDEO_RESOLUTION = "p_video_resolution";
 	public static final String KEY_VIDEO_WIDTH = "p_video_width";
