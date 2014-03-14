@@ -7,24 +7,30 @@ Story Maker
 
 * [Android SDK](https://developer.android.com/sdk/installing/index.html)
 * Working [Android NDK](https://developer.android.com/tools/sdk/ndk/index.html) toolchain
+* Unix build toolchain.  Linux and OS X are well tested.
 
 Follow these steps to setup your dev environment:
 
-1. Checkout mrapp git repo
-2. Init and update git submodules
+1. Clone the git repo, make sure you fork first if you intend to commit
+
+1. Init and update git submodules
 
     git submodule update --init --recursive
 
-3. Ensure `NDK_BASE` env variable is set to the location of your NDK, example:
+1. Ensure `NDK_BASE` env variable is set to the location of your NDK, example:
 
     export NDK_BASE=/path/to/android-ndk
 
-4. Build android-ffmpeg
+1. Build android-ffmpeg
 
     cd external/android-ffmpeg-java/external/android-ffmpeg/
     ./configure_make_everything.sh
 
-7. **Using Eclipse**
+1. run script to update all libraries android support library.  from command line run in the top level of the repo:
+
+        $ scripts/copy-support-libs.sh
+
+1. Setup Eclipse
 
     Import into Eclipse (using the "existing projects" option) the projects in this order:
 
@@ -33,11 +39,15 @@ Follow these steps to setup your dev environment:
         external/OnionKit/
         external/android-ffmpeg-java/
         external/WordpressJavaAndroid/
+        external/cardsui-for-android/CardsUILib
+        external/SlidingMenu/library
+        external/Android-ViewPagerIndicator/library
+        external/RangeSeekBar/library
 
 
    **Using command line**
 
-        cd app/
-        ./setup-ant.sh
-        ant clean debug
+        $ cd app/
+        $ ./setup-ant.sh
+        $ ant clean debug
 
